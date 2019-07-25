@@ -1,46 +1,70 @@
 package com.tps.user.models;
 
+import java.util.HashSet;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.*;
+import javax.validation.constraints.Size;
+import javax.validation.constraints.NotNull;
+
+//import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.tps.user.models.User;
+import org.hibernate.annotations.NaturalId;
+
 import java.util.Set;
-
-
+import com.fasterxml.jackson.annotation.*;
 
 @Entity
+@Table(name = "bookitems")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")    
 public class BookItem {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer isbn;
-    private String bookname;
+    @GeneratedValue(strategy =  GenerationType.IDENTITY)
+    private Long id;
 
-    @ManyToMany(mappedBy = "ownedBooks")
-    Set<User> users;
+    @NotNull
+    @Size(max = 30)
+    @NaturalId
+    private String isbn;
 
-    public void setISBN(Integer isbn){
+    @ManyToMany(fetch = FetchType.LAZY,
+    cascade = {
+        CascadeType.PERSIST,
+        CascadeType.MERGE
+    },
+    mappedBy = "books")
+    private Set<User> users = new HashSet<>();
+
+    public BookItem(){
+
+    }
+
+    public BookItem(String isbn){
         this.isbn = isbn;
     }
-    
-    public Integer getISBN(){
-        return this.isbn;
+
+    public void setId(Long id){
+        this.id = id;
     }
 
-    public void setBookname(String bookname){
-        this.bookname = bookname;
+    public Long getId(){
+        return id;
     }
 
-    public String getBookname(){
-        return this.bookname;
+    public void setISBN( String isbn){
+        this.isbn = isbn;
     }
 
-    public void setUsers(Set<User> usuarios){
-        this.users = usuarios;
+    public String getISBN(){
+        return isbn;
+    }
+
+    public void setUsers(Set<User> users){
+        this.users = users;
     }
 
     public Set<User> getUsers(){
-        return this.users;
+        return users;
     }
+
 }
 

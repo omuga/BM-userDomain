@@ -4,6 +4,6 @@ package com.tps.user.repository;
 import com.tps.user.models.BookItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface BookItemRepository extends JpaRepository<BookItem, Integer> {
+public interface BookItemRepository extends JpaRepository<BookItem, Long> {
 
 }

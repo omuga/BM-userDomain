@@ -4,33 +4,54 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.Size;
+
+import com.tps.user.models.BookItem;
+
+import org.springframework.lang.NonNull;
+
 import java.util.Set;
-import javax.persistence.JoinTable;;
 
+import javax.persistence.*;
+import java.util.HashSet;
 
+import com.fasterxml.jackson.annotation.*;
 
 @Entity
+@Table(name = "USER")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")    
 public class User {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    private Integer id;
-    private String username;
-    private String password;
-    private String email;
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private Long id;
 
-    @ManyToMany
-    @JoinTable(name = "books_own",
-    joinColumns = @JoinColumn(name= "user_id"),
-    inverseJoinColumns = @JoinColumn(name = "book_id"))
-    Set<BookItem> ownedBooks;
+    @NonNull
+    @Size(max = 100)
+    @Column(unique = true)
+    private String username;
+
+    @NonNull
+    private String password;
+
+    @NonNull    
+    private String email;
     
-    public Integer getId(){
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {
+                CascadeType.PERSIST,
+                CascadeType.MERGE
+            })
+    @JoinTable(name = "user_books",
+            joinColumns = { @JoinColumn(name = "user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "bookitem_id") })
+    private Set<BookItem> books = new HashSet<>();
+
+    public Long getId(){
         return id;
     }
 
-    public void setId(Integer id){
+    public void setId(Long id){
         this.id = id;
     }
 
@@ -58,12 +79,12 @@ public class User {
         return this.password;
     }
 
-    public void setBooks(Set<BookItem> bookItems){
-        this.ownedBooks = bookItems;
+    public void setBooks(Set<BookItem> books){
+        this.books = books;
     }
 
     public Set<BookItem> getBooks(){
-        return this.ownedBooks;
+        return this.books;
     }
 
 }
