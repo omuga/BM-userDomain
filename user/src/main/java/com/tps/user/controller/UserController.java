@@ -1,6 +1,5 @@
 package com.tps.user.controller;
 
-import javax.validation.Valid;
 
 import com.tps.user.models.BookItem;
 import com.tps.user.models.User;
@@ -60,7 +59,6 @@ public class UserController{
 		user.getBooks().add(bookItem);
 		bookItem.getUsers().add(user);
 		userRepository.save(user);
-		//bookItemRepository.save(bookItem);
 		return "Save";
 	}
 }
